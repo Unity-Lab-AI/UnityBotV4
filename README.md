@@ -57,6 +57,18 @@ Unity is an AI Discord bot that chats, remembers, and generates images and code.
 5. Run the bot:
    - Double-click `RUN_BOT.bat` (Windows) or run `python bot.py`
 
+### Automated setup
+
+- On **Linux** run `./setup.sh`
+- On **Windows** run `setup.bat`
+- To install a Linux system service run `./install.sh`
+
+### Updating
+
+- On **Linux** run `./update.sh`
+- On **Windows** run `update.bat`
+- The bot also checks GitHub every 15 minutes and updates automatically
+
 ## Commands
 
 - `!unityhelp` – Show commands/models

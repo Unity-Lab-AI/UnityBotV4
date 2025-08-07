@@ -49,6 +49,8 @@ async def on_ready():
     print(f"{bot.user} has connected to Discord!")
     logging.info("Bot is ready and connected.")
     await setup_bot()
+    asyncio.create_task(wipe_logs_periodically())
+    asyncio.create_task(check_for_updates_periodically())
 
 @bot.event
 async def on_message(message):
@@ -113,6 +115,35 @@ async def wipe_logs_periodically():
             break
         except Exception as e:
             logging.error(f"Error wiping logs: {e}")
+
+async def check_for_updates_periodically():
+    while True:
+        try:
+            await asyncio.sleep(900)
+            update_proc = await asyncio.create_subprocess_exec(
+                "git", "remote", "update",
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+            )
+            await update_proc.communicate()
+            status_proc = await asyncio.create_subprocess_exec(
+                "git", "status", "-uno",
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+            )
+            status_stdout, _ = await status_proc.communicate()
+            if b"behind" in status_stdout:
+                logging.info("Repository update detected; running update script.")
+                if os.name == "nt":
+                    result = os.system("update.bat")
+                else:
+                    result = os.system("bash update.sh")
+                if result != 0:
+                    logging.error(f"Update script exited with code {result}")
+        except asyncio.CancelledError:
+            break
+        except Exception as e:
+            logging.error(f"Error checking for updates: {e}")
 
 @bot.event
 async def on_connect():

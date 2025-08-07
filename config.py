@@ -5,13 +5,14 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# Load .env file
+# Load .env file if present, but allow environment variables to be set on the system
 env_path = os.path.join(os.path.dirname(__file__), '.env')
-if not os.path.exists(env_path):
-    logger.error(f".env file not found at {env_path}")
-    raise FileNotFoundError(f".env file not found at {env_path}")
-load_dotenv(env_path)
-logger.info(f"Loaded .env file from {env_path}")
+if os.path.exists(env_path):
+    # `override=False` ensures system environment variables take precedence
+    load_dotenv(env_path, override=False)
+    logger.info(f"Loaded .env file from {env_path}")
+else:
+    logger.info(f".env file not found at {env_path}; relying on system environment variables")
 
 class Config:
     def __init__(self):

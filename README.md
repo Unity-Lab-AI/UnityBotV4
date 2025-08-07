@@ -46,7 +46,7 @@ Unity is an AI Discord bot that chats, remembers, and generates images and code.
    - Go to <https://auth.pollinations.ai/>
    - Sign in (first login auto-assigns Seed tier)
    - Click **[Re]Generate Token**
-   - Copy the token (e.g., `RG4FePiPdUWkk5CI`)
+   - Copy the token (e.g., `DFH4rdfH4hdfDFk`)
    - Either set a system environment variable `POLLINATIONS_TOKEN=your_token_here` or add it to the `.env` file
    - **Warning:** Never share the token publicly or commit it to Git
 4. Install dependencies:

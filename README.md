@@ -41,13 +41,13 @@ Unity is an AI Discord bot that chats, remembers, and generates images and code.
    - Click **Bot** in left menu
    - Click **Add Bot** (under Bot section)
    - Click **Reset Token** (under Token), confirm, copy token
-   - Open `.env`, add: `DISCORD_TOKEN=your_token_here`
+   - Either set a system environment variable `DISCORD_TOKEN=your_token_here` or create a `.env` file with the same line
 3. Get a Pollinations.ai API Token:
    - Go to <https://auth.pollinations.ai/>
    - Sign in (first login auto-assigns Seed tier)
    - Click **[Re]Generate Token**
    - Copy the token (e.g., `RG4FePiPdUWkk5CI`)
-   - Open `.env`, add: `POLLINATIONS_TOKEN=your_token_here`
+   - Either set a system environment variable `POLLINATIONS_TOKEN=your_token_here` or add it to the `.env` file
    - **Warning:** Never share the token publicly or commit it to Git
 4. Install dependencies:
    - Open terminal/command prompt in folder
@@ -86,17 +86,17 @@ Examples:
 - `message_handler.py` – Message handling
 - `memory_manager.py` – Memory
 - `commands.py` – Commands
-- `config.py` – Settings (loads tokens from `.env`)
+- `config.py` – Settings (loads tokens from environment variables or `.env`)
 - `data_manager.py` – Data save
 - `requirements.txt` – Dependencies
-- `.env` – Tokens (keep secret)
+- `.env` – Optional file for tokens (keep secret)
 - `system_instructions.txt` – AI rules
 - `RUN_BOT.bat` – Start script
 - `logs/` – `application.log`, `chat_data.json`
 
 ## Troubleshooting
 
-- **Won’t start?** Check `.env` tokens, Python version, reinstall dependencies
+- **Won’t start?** Check tokens in environment variables or `.env`, Python version, reinstall dependencies
 - **No DMs?** Enable "Allow DMs from server members" in Discord
 - **Slow?** Check `logs/application.log`, restart
 - **No images/text?** Verify tokens in `.env`, use "generate an image of..."

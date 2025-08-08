@@ -1,6 +1,10 @@
 @echo off
 setlocal enabledelayedexpansion
 
+REM Ensure the script runs from its own directory
+set "SCRIPT_DIR=%~dp0"
+cd /d "%SCRIPT_DIR%"
+
 REM Ensure Python is available without compiling
 where python >nul 2>&1
 if errorlevel 1 (

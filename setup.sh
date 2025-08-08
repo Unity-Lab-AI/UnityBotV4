@@ -11,7 +11,7 @@ else
     TARGET="system"
 fi
 
-# Ensure system Python is available without compiling
+# Ensure system Python and required modules are available
 if ! command -v python3 >/dev/null; then
     echo "python3 not found. Installing..."
     if command -v apt-get >/dev/null; then
@@ -19,6 +19,26 @@ if ! command -v python3 >/dev/null; then
     else
         echo "Package manager not supported. Please install Python 3.8+ manually." >&2
         exit 1
+    fi
+else
+    # python3 present – ensure venv and pip modules are available
+    if ! python3 -m venv --help >/dev/null 2>&1; then
+        if command -v apt-get >/dev/null; then
+            echo "python3-venv not found. Installing..."
+            sudo apt-get update && sudo apt-get install -y python3-venv
+        else
+            echo "python3-venv is required but could not be installed automatically." >&2
+            exit 1
+        fi
+    fi
+    if ! python3 -m pip --version >/dev/null 2>&1; then
+        if command -v apt-get >/dev/null; then
+            echo "python3-pip not found. Installing..."
+            sudo apt-get update && sudo apt-get install -y python3-pip
+        else
+            echo "python3-pip is required but could not be installed automatically." >&2
+            exit 1
+        fi
     fi
 fi
 
@@ -34,7 +54,7 @@ fi
 
 # Create and activate virtual environment
 if [ ! -d .venv ]; then
-    python3 -m venv .venv
+    python3 -m venv .venv || { echo "Failed to create virtual environment" >&2; exit 1; }
 fi
 source .venv/bin/activate
 

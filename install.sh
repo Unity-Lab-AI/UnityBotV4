@@ -6,6 +6,12 @@ set -e
 SERVICE_NAME="unitybot"
 SCRIPT_DIR="$(dirname "$(realpath "$0")")"
 
+VENV_PYTHON="${SCRIPT_DIR}/.venv/bin/python"
+if [ ! -x "$VENV_PYTHON" ]; then
+    echo "Virtual environment not found. Run setup.sh before installing the service." >&2
+    exit 1
+fi
+
 cat <<EOF | sudo tee /etc/systemd/system/${SERVICE_NAME}.service >/dev/null
 [Unit]
 Description=UnityBot Discord Bot
@@ -14,7 +20,9 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=${SCRIPT_DIR}
-ExecStart=$(command -v python3) ${SCRIPT_DIR}/bot.py
+EnvironmentFile=-${SCRIPT_DIR}/.env
+EnvironmentFile=-/etc/environment
+ExecStart=${VENV_PYTHON} ${SCRIPT_DIR}/bot.py
 Restart=on-failure
 
 [Install]

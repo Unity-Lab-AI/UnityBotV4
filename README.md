@@ -63,6 +63,8 @@ Unity is an AI Discord bot that chats, remembers, and generates images and code.
 - On **Windows** run `setup.bat`
 - To install a Linux system service run `./install.sh`
 
+The setup scripts install a prebuilt Python 3.8+ if missing and create a local virtual environment for dependencies, preventing system-wide package changes.
+
 ### Updating
 
 - On **Linux** run `./update.sh`

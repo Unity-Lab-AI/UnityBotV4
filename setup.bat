@@ -1,21 +1,34 @@
 @echo off
 setlocal enabledelayedexpansion
 
-REM Ensure pyenv and Python are available
-set "PYENV=%USERPROFILE%\.pyenv"
-set "PATH=%PYENV%\pyenv-win\bin;%PYENV%\pyenv-win\shims;%PATH%"
-
-where pyenv >nul 2>&1
+REM Ensure Python is available without compiling
+where python >nul 2>&1
 if errorlevel 1 (
-    echo pyenv not found. Installing...
-    powershell -NoProfile -ExecutionPolicy Bypass -Command "Invoke-WebRequest -UseBasicParsing https://pyenv.win/install.ps1 ^| Invoke-Expression"
-    set "PATH=%PYENV%\pyenv-win\bin;%PYENV%\pyenv-win\shims;%PATH%"
+    echo Python not found. Downloading installer...
+    powershell -NoProfile -ExecutionPolicy Bypass -Command "Invoke-WebRequest https://www.python.org/ftp/python/3.11.6/python-3.11.6-amd64.exe -OutFile python-installer.exe" || exit /b 1
+    echo Installing Python...
+    start /wait python-installer.exe /quiet InstallAllUsers=1 PrependPath=1 Include_test=0 SimpleInstall=1 || exit /b 1
+    del python-installer.exe
 )
 
-set "PY_VERSION=3.11.6"
-pyenv install -s %PY_VERSION% || exit /b 1
-pyenv virtualenv -f %PY_VERSION% unitybot-env >nul 2>&1 || exit /b 1
-pyenv local unitybot-env || exit /b 1
+for /f "tokens=2 delims= " %%I in ('python -V 2^>^&1') do set PY_VER=%%I
+for /f "tokens=1,2 delims=." %%a in ("%PY_VER%") do (
+    set MAJOR=%%a
+    set MINOR=%%b
+)
+if %MAJOR% LSS 3 (
+    echo Python 3.8+ is required.
+    exit /b 1
+)
+if %MAJOR%==3 if %MINOR% LSS 8 (
+    echo Python 3.8+ is required.
+    exit /b 1
+)
+
+if not exist .venv (
+    python -m venv .venv || exit /b 1
+)
+call .venv\Scripts\activate.bat
 
 echo Use .env file for configuration? (Y/N):
 set /p use_env=
@@ -28,6 +41,7 @@ if /I "%use_env%"=="Y" (
 call :prompt_var DISCORD_TOKEN
 call :prompt_var POLLINATIONS_TOKEN
 
+python -m pip install -U pip || exit /b 1
 pip install -r requirements.txt || exit /b 1
 
 echo Setup complete.

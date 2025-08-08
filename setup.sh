@@ -11,28 +11,32 @@ else
     TARGET="system"
 fi
 
-# Ensure pyenv and Python are available
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-if ! command -v pyenv >/dev/null; then
-    echo "pyenv not found. Installing..."
-    curl https://pyenv.run | bash || { echo "Failed to install pyenv"; exit 1; }
-    export PATH="$PYENV_ROOT/bin:$PATH"
+# Ensure system Python is available without compiling
+if ! command -v python3 >/dev/null; then
+    echo "python3 not found. Installing..."
+    if command -v apt-get >/dev/null; then
+        sudo apt-get update && sudo apt-get install -y python3 python3-venv python3-pip
+    else
+        echo "Package manager not supported. Please install Python 3.8+ manually." >&2
+        exit 1
+    fi
 fi
 
-if command -v pyenv >/dev/null; then
-    eval "$(pyenv init -)"
-    eval "$(pyenv virtualenv-init -)"
-    PY_VERSION="3.11.6"
-    pyenv install -s "$PY_VERSION"
-    if ! pyenv virtualenvs --bare | grep -q "^unitybot-env$"; then
-        pyenv virtualenv "$PY_VERSION" unitybot-env
-    fi
-    pyenv local unitybot-env
-else
-    echo "pyenv installation failed. Exiting."
+# Verify Python version
+python3 - <<'PYTHON'
+import sys
+sys.exit(0 if sys.version_info >= (3, 8) else 1)
+PYTHON
+if [ $? -ne 0 ]; then
+    echo "Python 3.8+ is required. Please install a supported version." >&2
     exit 1
 fi
+
+# Create and activate virtual environment
+if [ ! -d .venv ]; then
+    python3 -m venv .venv
+fi
+source .venv/bin/activate
 
 prompt_var() {
     local var_name=$1
@@ -67,6 +71,7 @@ prompt_var() {
 prompt_var "DISCORD_TOKEN"
 prompt_var "POLLINATIONS_TOKEN"
 
+pip install -U pip
 pip install -r requirements.txt
 
 echo "Setup complete."

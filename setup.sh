@@ -66,9 +66,9 @@ source .venv/bin/activate
 prompt_var() {
     local var_name=$1
     local env_val
-    env_val=$(printenv "$var_name")
+    env_val=$(printenv "$var_name" 2>/dev/null || true)
     local file_val=""
-    [[ -f .env ]] && file_val=$(grep -E "^${var_name}=" .env | cut -d'=' -f2-)
+    [[ -f .env ]] && file_val=$(grep -E "^${var_name}=" .env | cut -d'=' -f2- 2>/dev/null || true)
 
     if [[ "$TARGET" == "env" ]]; then
         if [[ -n "$file_val" ]]; then

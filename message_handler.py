@@ -74,14 +74,18 @@ class MessageHandler:
         image_urls = final_message["image_urls"]
         guild_id = str(message.guild.id) if message.guild else "DM"
         files = []
-        for url in image_urls:
+        if image_urls:
             async with aiohttp.ClientSession() as session:
-                async with session.get(url) as resp:
-                    if resp.status == 200:
-                        data = await resp.read()
-                        files.append(discord.File(BytesIO(data), filename="image.png"))
-                    else:
-                        logger.error(f"Failed to fetch image from {url}: status {resp.status}")
+                for url in image_urls:
+                    try:
+                        async with session.get(url) as resp:
+                            if resp.status == 200:
+                                data = await resp.read()
+                                files.append(discord.File(BytesIO(data), filename="image.png"))
+                            else:
+                                logger.error(f"Failed to fetch image from {url}: status {resp.status}")
+                    except Exception as e:
+                        logger.error(f"Error fetching image from {url}: {e}")
 
         if content or files:
             prefixed_content = f"<@{user_id}> {content}" if content else f"<@{user_id}>"

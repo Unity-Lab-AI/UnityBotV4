@@ -135,11 +135,29 @@ async def check_for_updates_periodically():
             if b"behind" in status_stdout:
                 logging.info("Repository update detected; running update script.")
                 if os.name == "nt":
-                    result = os.system("update.bat")
+                    cmd = ["cmd", "/c", "update.bat"]
                 else:
-                    result = os.system("bash update.sh")
-                if result != 0:
-                    logging.error(f"Update script exited with code {result}")
+                    cmd = ["bash", "update.sh"]
+                update_script = await asyncio.create_subprocess_exec(
+                    *cmd,
+                    stdout=asyncio.subprocess.PIPE,
+                    stderr=asyncio.subprocess.PIPE,
+                )
+                stdout, stderr = await update_script.communicate()
+                if stdout:
+                    logging.info(
+                        f"Update script stdout: {stdout.decode().strip()}"
+                    )
+                if stderr:
+                    logging.error(
+                        f"Update script stderr: {stderr.decode().strip()}"
+                    )
+                if update_script.returncode != 0:
+                    logging.error(
+                        f"Update script exited with code {update_script.returncode}"
+                    )
+                else:
+                    logging.info("Update script completed successfully.")
         except asyncio.CancelledError:
             break
         except Exception as e:

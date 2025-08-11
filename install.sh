@@ -6,6 +6,10 @@ set -e
 SERVICE_NAME="unitybot"
 SCRIPT_DIR="$(dirname "$(realpath "$0")")"
 
+# Run the service as the invoking user instead of root when using sudo
+RUN_USER="${SUDO_USER:-$(id -un)}"
+RUN_GROUP="$(id -gn "$RUN_USER")"
+
 if [ "$(id -u)" -eq 0 ]; then
     SUDO=""
 else
@@ -34,6 +38,8 @@ After=network.target
 
 [Service]
 Type=simple
+User=${RUN_USER}
+Group=${RUN_GROUP}
 WorkingDirectory=${SCRIPT_DIR}
 EnvironmentFile=-${SCRIPT_DIR}/.env
 EnvironmentFile=-/etc/environment

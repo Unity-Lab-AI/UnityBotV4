@@ -3,6 +3,7 @@ from discord.ext import commands
 from discord.ui import View, Button
 from discord import ButtonStyle
 import asyncio
+import logging
 
 class ModelSelectView(View):
     def __init__(self, models, user_id, guild_id, memory_manager, data_manager):
@@ -57,8 +58,8 @@ class ModelSelectView(View):
             child.disabled = True
         try:
             await self.message.edit(view=self)
-        except:
-            pass
+        except Exception as e:
+            logging.error("Failed to edit message on timeout", exc_info=e)
 
 def setup_commands(bot, models):
     @bot.command(name="unityhelp")

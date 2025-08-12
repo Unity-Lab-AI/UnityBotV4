@@ -23,11 +23,6 @@ Unity is an AI Discord bot that chats, remembers, and generates images and code.
 
 - `discord.py` ≥ 2.0.0
 - `aiohttp`
-- `aiosqlite`
-- `pillow`
-- `apscheduler`
-- `langdetect`
-- `googletrans==4.0.0-rc1`
 - `aiofiles`
 - `python-dotenv`
 
@@ -53,13 +48,12 @@ Unity is an AI Discord bot that chats, remembers, and generates images and code.
    - Open terminal/command prompt in folder
    - Run: `pip install -U pip` (updates pip if needed)
    - Run: `pip install -r requirements.txt`
-   - Run: `python -m spacy download en_core_web_sm`
 5. Run the bot:
    - Double-click `RUN_BOT.bat` (Windows) or run `python bot.py`
 
 ### Automated setup
 
-- On **Linux** run `./setup.sh` (creates a virtual environment, installs dependencies, and downloads the required spaCy model)
+- On **Linux** run `./setup.sh` (creates a virtual environment and installs dependencies)
 - On **Windows** run `setup.bat`
 - To install a Linux system service run `./install.sh` (service runs as the invoking user)
 

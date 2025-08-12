@@ -1,7 +1,7 @@
 #!/bin/bash
+set -euo pipefail
 
 # Setup script for UnityBotV4 on Linux
-set -e
 
 # Ensure the script runs from its own directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -64,7 +64,7 @@ fi
 source .venv/bin/activate
 
 prompt_var() {
-    local var_name=$1
+    local var_name="$1"
     local env_val
     env_val=$(printenv "$var_name" 2>/dev/null || true)
     local file_val=""
@@ -74,22 +74,22 @@ prompt_var() {
         if [[ -n "$file_val" ]]; then
             echo "$var_name already set in .env. Skipping prompt."
         else
-            read -r -p "Enter value for $var_name${env_val:+ [$env_val]}: " value
-            value=${value:-$env_val}
-            [[ -f .env ]] && grep -v "^$var_name=" .env > .env.tmp && mv .env.tmp .env
-            echo "$var_name=$value" >> .env
+            read -r -p "Enter value for ${var_name}${env_val:+ [${env_val}]}: " value
+            value="${value:-${env_val}}"
+            [[ -f .env ]] && grep -v "^${var_name}=" .env > .env.tmp && mv .env.tmp .env
+            echo "${var_name}=${value}" >> .env
         fi
     else
         if [[ -n "$env_val" ]]; then
             echo "$var_name already set. Skipping prompt."
         else
-            read -r -p "Enter value for $var_name: " value
-            if grep -q "^$var_name=" /etc/environment 2>/dev/null; then
-                sudo sed -i "s/^$var_name=.*/$var_name=\"${value}\"/" /etc/environment
+            read -r -p "Enter value for ${var_name}: " value
+            if grep -q "^${var_name}=" /etc/environment 2>/dev/null; then
+                sudo sed -i "s/^${var_name}=.*/${var_name}=\"${value}\"/" /etc/environment
             else
-                echo "$var_name=\"${value}\"" | sudo tee -a /etc/environment >/dev/null
+                echo "${var_name}=\"${value}\"" | sudo tee -a /etc/environment >/dev/null
             fi
-            export "$var_name"="$value"
+            export "${var_name}"="${value}"
         fi
     fi
 }

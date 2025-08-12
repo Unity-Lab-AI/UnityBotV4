@@ -99,8 +99,6 @@ prompt_var "POLLINATIONS_TOKEN"
 
 python -m pip install -U pip
 python -m pip install -r requirements.txt
-# Download required spaCy language model
-python -m spacy download en_core_web_sm || { echo "Failed to download spaCy model" >&2; exit 1; }
 
 echo "Setup complete."
 

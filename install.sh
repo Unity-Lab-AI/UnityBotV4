@@ -1,7 +1,7 @@
 #!/bin/bash
+set -euo pipefail
 
 # Install UnityBotV4 as a systemd service on Linux
-set -e
 
 SERVICE_NAME="unitybot"
 SCRIPT_DIR="$(dirname "$(realpath "$0")")"
@@ -31,19 +31,19 @@ if [ ! -x "$VENV_PYTHON" ]; then
     exit 1
 fi
 
-cat <<EOF | $SUDO tee /etc/systemd/system/${SERVICE_NAME}.service >/dev/null
+cat <<EOF | $SUDO tee "/etc/systemd/system/${SERVICE_NAME}.service" >/dev/null
 [Unit]
 Description=UnityBot Discord Bot
 After=network.target
 
 [Service]
 Type=simple
-User=${RUN_USER}
-Group=${RUN_GROUP}
-WorkingDirectory=${SCRIPT_DIR}
-EnvironmentFile=-${SCRIPT_DIR}/.env
+User="${RUN_USER}"
+Group="${RUN_GROUP}"
+WorkingDirectory="${SCRIPT_DIR}"
+EnvironmentFile=-"${SCRIPT_DIR}/.env"
 EnvironmentFile=-/etc/environment
-ExecStart=${VENV_PYTHON} ${SCRIPT_DIR}/bot.py
+ExecStart="${VENV_PYTHON}" "${SCRIPT_DIR}/bot.py"
 Restart=on-failure
 
 [Install]
@@ -51,8 +51,8 @@ WantedBy=multi-user.target
 EOF
 
 $SUDO systemctl daemon-reload
-$SUDO systemctl enable ${SERVICE_NAME}
-$SUDO systemctl start ${SERVICE_NAME}
+$SUDO systemctl enable "${SERVICE_NAME}"
+$SUDO systemctl start "${SERVICE_NAME}"
 
 echo "Service ${SERVICE_NAME} installed and started."
 

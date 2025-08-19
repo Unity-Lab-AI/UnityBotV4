@@ -1,5 +1,11 @@
 # .gitignore
 
-# Files
+# Python cache
+__pycache__/
 
-# Folders
+# Virtual environment
+.venv/
+
+# Local environment variables
+.env
+

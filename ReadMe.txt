@@ -47,12 +47,14 @@ SETUP
    - Copy the token (e.g., RG4FePiPdUWkk5CI)
    - Open .env, add: POLLINATIONS_TOKEN=your_token_here
    - Warnings: Never share token publicly, don't commit to Git
-4. Install dependencies:
+4. (Optional) Restrict bot responses to certain channels:
+   - Open .env, add: ALLOWED_CHANNELS=123456789012345678,987654321098765432
+5. Install dependencies:
    - Open terminal/command prompt in folder
    - Run: pip install -U pip  (updates pip if needed)
    - Run: pip install -r requirements.txt
    - Run: python -m spacy download en_core_web_sm
-5. Run bot:
+6. Run bot:
    - Double-click RUN_BOT.bat (Windows) or run: python bot.py
 
 COMMANDS

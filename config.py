@@ -65,6 +65,9 @@ class Config:
         self.code_block_regex = r"```(\w*)\n([\s\S]*?)\n```"
         self.url_regex = r"https?://[^\s>]+"
 
+        allowed_channels_env = os.getenv("ALLOWED_CHANNELS", "")
+        self.allowed_channels = [ch.strip() for ch in allowed_channels_env.split(",") if ch.strip()]
+
     def is_image_request(self, message: str) -> bool:
         return any(keyword in message.lower() for keyword in self.image_keywords)
 

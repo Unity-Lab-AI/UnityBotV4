@@ -56,6 +56,15 @@ async def on_ready():
 async def on_message(message):
     if message.author == bot.user:
         return
+    if message.guild and config.allowed_channels and str(message.channel.id) not in config.allowed_channels:
+        logging.info(
+            f"Ignoring message in unauthorized channel {message.channel.id}"
+        )
+        return
+
+    if message.author.bot:
+        logging.info(f"Delaying response to bot {message.author.id} by 10 seconds")
+        await asyncio.sleep(10)
 
     channel_id = str(message.channel.id)
     guild_id = str(message.guild.id) if message.guild else "DM"

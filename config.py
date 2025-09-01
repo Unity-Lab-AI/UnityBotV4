@@ -65,6 +65,10 @@ class Config:
         self.models_url = "https://text.pollinations.ai/models"
         self.max_history = 20
         self.max_memories = 5
+        allowed_channels_env = os.getenv("ALLOWED_CHANNELS", "")
+        self.allowed_channels = {
+            ch.strip() for ch in allowed_channels_env.split(",") if ch.strip()
+        }
         self.code_keywords = [
             "code", "script", "program", "function", "class",
             "method", "javascript", "python", "java", "html", "css"

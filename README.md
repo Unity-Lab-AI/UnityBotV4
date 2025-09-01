@@ -112,6 +112,7 @@ Examples:
 ## Config Tweaks
 
 - Edit `config.py`: `max_history` (20), `max_memories` (5), add code/image keywords
+- Optionally set `ALLOWED_CHANNELS` in `.env` to comma-separated channel IDs the bot may respond in
 - Edit `system_instructions.txt` for AI style
 
 ## Security

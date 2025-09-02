@@ -10,6 +10,7 @@ from message_handler import MessageHandler
 from memory_manager import MemoryManager
 from commands import setup_commands
 from data_manager import DataManager
+from queue_system import MessageQueueSystem
 
 if not os.path.exists("logs"):
     os.makedirs("logs")
@@ -31,6 +32,7 @@ bot.data_manager = data_manager
 message_handler = MessageHandler(api_client, memory_manager, config, data_manager, bot)
 memory_manager.api_client = api_client
 bot.memory_manager = memory_manager
+message_queue = MessageQueueSystem(bot, message_handler)
 
 async def setup_bot():
     await bot.wait_until_ready()
@@ -49,6 +51,7 @@ async def on_ready():
     print(f"{bot.user} has connected to Discord!")
     logging.info("Bot is ready and connected.")
     await setup_bot()
+    message_queue.start()
 
 @bot.event
 async def on_message(message):
@@ -58,31 +61,7 @@ async def on_message(message):
     if config.allowed_channels and str(message.channel.id) not in config.allowed_channels:
         return
 
-    if message.author.bot:
-        await asyncio.sleep(10)
-
-    channel_id = str(message.channel.id)
-    guild_id = str(message.guild.id) if message.guild else "DM"
-    user_id = str(message.author.id)
-    logging.info(f"Received message from {user_id} in channel {channel_id} (guild: {guild_id}): {message.content}")
-
-    memory_manager.initialize_channel(channel_id)
-    user_model = memory_manager.get_user_model(guild_id, user_id)
-    logging.info(f"User {user_id} using model: {user_model} in guild {guild_id}")
-
-    try:
-        await bot.process_commands(message)
-        await message_handler.handle_message(message)
-        await data_manager.save_data_async(memory_manager)
-    except Exception as e:
-        logging.error(f"Error handling message for user {user_id}: {e}")
-        try:
-            await message.channel.send(f"<@{user_id}> Something went wrong - please try again.")
-        except Exception as send_error:
-            logging.error(f"Failed to send error message to user {user_id}: {send_error}")
-
-    if len(memory_manager.channel_histories.get(channel_id, [])) > config.max_history:
-        memory_manager.channel_histories[channel_id] = memory_manager.channel_histories[channel_id][-config.max_history:]
+    await message_queue.enqueue(message)
 
 @bot.command(name="wipe")
 async def wipe(ctx):
